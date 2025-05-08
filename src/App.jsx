@@ -11,7 +11,7 @@ import Register from './pages/Register.jsx';
 import Shop from './pages/Shop.jsx';
 import Contact from './pages/Contact.jsx';
 import Welcome from './pages/Welcome.jsx';
-import Consent from './pages/consent.jsx';
+import Consent from './pages/Consent.jsx';
 import PhotoInstructions from './pages/PhotoInstructions.jsx';
 import EditProfile from './pages/EditProfile.jsx';
 // Admin pages
