@@ -1,5 +1,5 @@
 import { Users, Leaf, Star } from "lucide-react";
-import "../About.css";
+import "../about.css";
 
 const About = () => {
   const teamMembers = [
