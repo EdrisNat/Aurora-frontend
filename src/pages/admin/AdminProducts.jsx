@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import '../../style.css';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const AdminProducts = () => {
   const [products, setProducts] = useState([]);
@@ -79,7 +81,8 @@ const AdminProducts = () => {
           setShowModal(false);
           setEditingIndex(null);
         })
-        .catch(err => console.error('Error updating product:', err));
+        .catch(() => toast.error('❌ Failed to update product'));
+
     } else {
       // Add product
       fetch('http://localhost:8000/api/admin/products/', {
@@ -94,8 +97,10 @@ const AdminProducts = () => {
         .then(data => {
           setProducts(prev => [...prev, data]);
           setShowModal(false);
+          toast.success('✅ Product added successfully');
         })
-        .catch(err => console.error('Error adding product:', err));
+        .catch(() => toast.error('❌ Failed to add product'));
+        
     }
   };
 
@@ -103,11 +108,11 @@ const AdminProducts = () => {
     const prod = products[index];
     if (!window.confirm('Delete this product?')) return;
     fetch(`http://localhost:8000/api/admin/products/${prod.id}/`, { method: 'DELETE' })
-      .then(res => {
-        if (!res.ok) throw new Error('Failed to delete product');
-        setProducts(prev => prev.filter((_, i) => i !== index));
-      })
-      .catch(err => console.error('Error deleting product:', err));
+    .then(() => {
+      setProducts(prev => prev.filter((_, i) => i !== index));
+      toast.success('🗑️ Product deleted');
+    })
+    .catch(() => toast.error('❌ Failed to delete product'));
   };
 
   return (
@@ -178,6 +183,7 @@ const AdminProducts = () => {
           </div>
         ))}
       </div>
+      <ToastContainer position="top-center" autoClose={2500} />
     </div>
   );
 };

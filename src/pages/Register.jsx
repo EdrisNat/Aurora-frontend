@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import '../style.css';
 import { useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const Register = () => {
   const [email, setEmail] = useState('');
@@ -31,10 +34,12 @@ const Register = () => {
 
     // Front-end validations
     if (password.length < 8) {
-      return alert('Password must be at least 8 characters long.');
-    }
+      toast.error('Password must be at least 8 characters long.');
+      return;
+    }    
     if (password !== confirmPassword) {
-      return alert('Passwords do not match.');
+      toast.error('Passwords do not match.');
+      return;
     }
 
     // Process allergies into array
@@ -54,12 +59,13 @@ const Register = () => {
         return response.json().then(data => { throw new Error(data.error || 'Registration failed'); });
       })
       .then(() => {
-        alert('Registration successful! Please log in.');
-        navigate('/login');
+        toast.success('Registration successful! Redirecting to login...');
+        setTimeout(() => navigate('/login'), 2000);
+
       })
       .catch(error => {
-        alert(error.message);
-      });
+        toast.error(error.message || 'Registration failed');
+      });      
   };
 
   const ageOptions = [
@@ -189,6 +195,7 @@ const Register = () => {
           </div>
         </div>
       </div>
+      <ToastContainer position="top-center" autoClose={2500} />
     </div>
   );
 };

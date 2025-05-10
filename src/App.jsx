@@ -39,6 +39,7 @@ import PublicFAQ from './pages/PublicFAQ.jsx';
 import AdminBlogs from './pages/admin/AdminBlogs.jsx';
 import UserBlogs from './pages/UserBlogs.jsx';
 import AdminRatings from './pages/admin/AdminRatings.jsx';
+import PaymentSuccess from './pages/PaymentSuccess.jsx';
 
 const isAuthenticated = () => sessionStorage.getItem('isAuthenticated') === 'true';
 const isAdminAuthenticated = () => sessionStorage.getItem('isAdminAuthenticated') === 'true';
@@ -94,6 +95,7 @@ function App() {
         <Route path="/order-success" element={<OrderSuccess />} />
         <Route path="/public-faq" element={<PublicFAQ />} />
         <Route path="/blogs" element={<UserBlogs />} />
+        <Route path="/payment-success" element={<PaymentSuccess/>} />
 
         {/* Admin login route */}
         <Route path="/admin-login" element={<AdminLogin />} />

@@ -85,7 +85,7 @@ const AdminFAQ = () => {
             <p><strong>A:</strong> {q.answer}</p>
             <button
               onClick={() => handleDelete(q.id)}
-              style={{ background: '#dc3545', color: 'white', padding: '0.5rem', border: 'none', borderRadius: '4px' }}
+              style={{ background: '#228132', color: 'white', padding: '0.5rem', border: 'none', borderRadius: '4px' }}
             >
               Delete
             </button>

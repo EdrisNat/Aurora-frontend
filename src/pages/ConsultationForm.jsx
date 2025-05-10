@@ -4,14 +4,16 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const ConsultationForm = () => {
+  const userEmail = sessionStorage.getItem('currentUserEmail') || '';
   const [form, setForm] = useState({
     name: '',
-    email: '',
+    email: userEmail,
     phone: '',
     date: '',
     time: '',
     concerns: [],
     info: '',
+    meeting_type: ''
   });
 
   // Label/value pairs so UI stays the same but backend gets HH:MM:SS
@@ -51,7 +53,8 @@ const ConsultationForm = () => {
       preferred_date: form.date,
       preferred_time: form.time,
       concern: form.concerns.join(', '),
-      additional_info: form.info
+      additional_info: form.info,
+      meeting_type: form.meeting_type
     };
 
     fetch('http://localhost:8000/api/consultations/', {
@@ -113,8 +116,15 @@ const ConsultationForm = () => {
                     Email Address
                   </label>
                   <input
-                    name="email" type="email" value={form.email} onChange={handleChange} required
-                    style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid #e5e7eb' }}
+                    name="email" type="email" value={form.email} readOnly
+                    style={{
+                      width: '100%',
+                      padding: '0.75rem',
+                      borderRadius: '6px',
+                      border: '1px solid #e5e7eb',
+                      backgroundColor: '#f3f4f6',
+                      color: '#6b7280'
+                    }}
                   />
                 </div>
                 <div style={{ flex: 1 }}>
@@ -191,6 +201,24 @@ const ConsultationForm = () => {
                   ))}
                 </div>
               </div>
+              {/* Meeting Type */}
+              <div style={{ marginBottom: '1rem' }}>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', color: '#111827' }}>
+                  Preferred Meeting Type
+                </label>
+                <select
+                  name="meeting_type"
+                  value={form.meeting_type || ''}
+                  onChange={handleChange}
+                  required
+                  style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid #e5e7eb' }}
+                >
+                  <option value="">Select</option>
+                  <option value="online">Online (Zoom/Google Meet)</option>
+                  <option value="physical">Physical (In-person)</option>
+                </select>
+              </div>
+
 
               {/* Additional Info */}
               <div style={{ marginBottom: '1rem' }}>

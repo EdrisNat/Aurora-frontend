@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../UserDashboard.css';
+import { loadStripe } from '@stripe/stripe-js';
+
 
 const Welcome = () => {
   const navigate = useNavigate();
@@ -9,10 +11,9 @@ const Welcome = () => {
   const imageUrl = sessionStorage.getItem("profileImageURL");
   const profileImage = imageUrl && imageUrl !== "null" ? imageUrl : "/default-avatar.png";
 
-  const [stars, setStars] = useState(4);  // default 4-star
+  const [stars, setStars] = useState(4);
   const [comment, setComment] = useState('');
   const [ratingMessage, setRatingMessage] = useState('');
-
 
   const [lastAnalysisDate, setLastAnalysisDate] = useState('N/A');
   const [commonIssue, setCommonIssue] = useState('N/A');
@@ -20,11 +21,11 @@ const Welcome = () => {
   const [recommended, setRecommended] = useState([]);
   const [blogs, setBlogs] = useState([]);
   const [recent, setRecent] = useState([]);
+  const [consultations, setConsultations] = useState([]);
 
   useEffect(() => {
     if (!email) return;
 
-    // Fetch skin overview
     fetch(`http://localhost:8000/api/user/analysis-summary/${email}`)
       .then(res => res.json())
       .then(data => {
@@ -33,20 +34,22 @@ const Welcome = () => {
         setSkinScore(data.skin_score || null);
       });
 
-    // Fetch recommended products
     fetch(`http://localhost:8000/api/user/recommended-products/${email}`)
       .then(res => res.json())
       .then(data => setRecommended(data));
 
-    // Fetch latest blogs
     fetch('http://localhost:8000/api/blogs/')
       .then(res => res.json())
-      .then(data => setBlogs(data.slice(0, 2))); // show top 2 blogs
+      .then(data => setBlogs(data.slice(0, 2)));
 
-    // Fetch recent activity
     fetch(`http://localhost:8000/api/user/activity/${email}`)
       .then(res => res.json())
       .then(data => setRecent(data));
+
+    fetch(`http://localhost:8000/api/user/consultations/${email}`)
+      .then(res => res.json())
+      .then(data => setConsultations(data));
+
   }, [email]);
 
   return (
@@ -55,7 +58,6 @@ const Welcome = () => {
         <h2 className="dashboard-title">Welcome, {name}!</h2>
         <p className="dashboard-subtitle">Here's a snapshot of your skin wellness journey.</p>
 
-        {/* Quick Actions Toolbar */}
         <div className="quick-actions-bar">
           <button onClick={() => navigate('/consent')} className="quick-action-btn">🧪 Analyze Skin</button>
           <button onClick={() => navigate('/profile')} className="quick-action-btn">👤 Profile</button>
@@ -64,7 +66,6 @@ const Welcome = () => {
         </div>
 
         <div className="dashboard-grid">
-          {/* Skin Summary */}
           <div className="dashboard-card highlight-card">
             <h3>🌿 Skin Health Overview</h3>
             <p><strong>Last Analysis:</strong> {lastAnalysisDate}</p>
@@ -73,7 +74,6 @@ const Welcome = () => {
             <button className="btn btn-primary" onClick={() => navigate('/consent')}>Analyze Again</button>
           </div>
 
-          {/* Recommended Products */}
           <div className="dashboard-card">
             <h3>🧴 Recommended Products</h3>
             <ul className="product-list">
@@ -84,7 +84,6 @@ const Welcome = () => {
             <button className="btn btn-outline" onClick={() => navigate('/shop')}>View All Products</button>
           </div>
 
-          {/* Latest Blogs */}
           <div className="dashboard-card">
             <h3>📖 Latest from Aurora</h3>
             <ul className="blog-list">
@@ -100,18 +99,13 @@ const Welcome = () => {
             <button className="btn btn-outline" onClick={() => navigate('/blogs')}>Read More Articles</button>
           </div>
 
-          {/* Ratings */}
           <div className="dashboard-card">
             <h3>🌟 Rate Our Service</h3>
             <div className="star-row">
               {[1, 2, 3, 4, 5].map((n) => (
                 <span
                   key={n}
-                  style={{
-                    fontSize: '1.5rem',
-                    cursor: 'pointer',
-                    color: n <= stars ? '#f5b50a' : '#ccc',
-                  }}
+                  style={{ fontSize: '1.5rem', cursor: 'pointer', color: n <= stars ? '#f5b50a' : '#ccc' }}
                   onClick={() => setStars(n)}
                 >
                   ★
@@ -125,34 +119,27 @@ const Welcome = () => {
               value={comment}
               onChange={(e) => setComment(e.target.value)}
             />
-            <button
-              className="btn btn-primary"
-              onClick={() => {
-                fetch('http://localhost:8000/api/rate-service/', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    user_email: email,
-                    user_name: name,
-                    profile_image_url: profileImage,
-                    stars: stars,
-                    comment: comment,
-                  }),                                 
+            <button className="btn btn-primary" onClick={() => {
+              fetch('http://localhost:8000/api/rate-service/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  user_email: email,
+                  user_name: name,
+                  profile_image_url: profileImage,
+                  stars: stars,
+                  comment: comment,
                 })
-                  .then((res) => res.json())
-                  .then((data) => {
-                    if (data.message) setRatingMessage(data.message);
-                    else alert('Error: ' + JSON.stringify(data));
-                  });
-              }}
-            >
-              Submit Rating
-            </button>
+              })
+                .then((res) => res.json())
+                .then((data) => {
+                  if (data.message) setRatingMessage(data.message);
+                  else alert('Error: ' + JSON.stringify(data));
+                });
+            }}>Submit Rating</button>
             {ratingMessage && <p style={{ color: 'green' }}>{ratingMessage}</p>}
           </div>
 
-
-          {/* Recent Activity */}
           <div className="dashboard-card">
             <h3>🕒 Recent Activity</h3>
             <ul className="activity-list">
@@ -160,6 +147,58 @@ const Welcome = () => {
                 recent.map((act, idx) => <li key={idx}>{act.description}</li>)
               ) : <li>No activity yet.</li>}
             </ul>
+          </div>
+
+          <div className="dashboard-card">
+            <h3>💬 Consultations Updates</h3>
+            {consultations.length > 0 ? (
+              consultations.map((c, idx) => (
+                <div key={idx} style={{ borderBottom: '1px solid #ddd', paddingBottom: '1rem', marginBottom: '1rem' }}>
+                  <p><strong>Status:</strong> {c.status}</p>
+                  <p><strong>Assigned Consultant:</strong> {c.assigned_consultant || 'Pending assignment'}</p>
+                  <p><strong>Date & Time:</strong> {c.confirmed_date || 'TBD'} {c.confirmed_time || ''}</p>
+                  <p><strong>Fee:</strong> {c.consultation_fee ? `$${c.consultation_fee}` : 'Not Set'}</p>
+                  {c.meeting_type === 'online' && c.meeting_link && (
+                    <p><strong>Meeting Link:</strong> <a href={c.meeting_link} target="_blank" rel="noopener noreferrer">Join</a></p>
+                  )}
+                  <p><strong>Payment:</strong> {c.payment_confirmed ? 'Confirmed ✅' : (
+                    <>
+                      Pending ❌
+                      <br />
+                      {c.consultation_fee && (
+                        <button
+                          style={{
+                            backgroundColor: '#1a8d50',
+                            color: '#fff',
+                            padding: '0.4rem 0.75rem',
+                            borderRadius: '6px',
+                            border: 'none',
+                            cursor: 'pointer',
+                            marginTop: '0.5rem'
+                          }}
+                          onClick={async () => {
+                            const res = await fetch('http://localhost:8000/api/consultation-payment/', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({
+                                consultation_id: c.id,
+                                email: email,
+                              })
+                            });
+                            const data = await res.json();
+                            const stripe = await loadStripe('pk_test_51RIU9F2M1FZ2eECH7eq4MW90KrgiaVk6WyruRTuiD1svrAW3wPtKECnTagjhPQ6NbQvJF2gvgW5mFXuQbqwMoKRd00c7ohPdU6');
+                            await stripe.redirectToCheckout({ sessionId: data.id });
+                          }}
+                        >
+                          Pay Consultation Fee
+                        </button>
+                      )}
+                    </>
+                  )}</p>
+
+                </div>
+              ))
+            ) : <p>No consultations info yet.</p>}
           </div>
         </div>
       </div>

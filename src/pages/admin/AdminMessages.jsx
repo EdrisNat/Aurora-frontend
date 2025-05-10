@@ -99,7 +99,7 @@ const AdminMessages = () => {
                     onClick={() => handleDeleteMessage(msg.id)}
                     className="btn-delete"
                     style={{
-                      backgroundColor: '#f87171',
+                      backgroundColor: '#228132',
                       color: 'white',
                       padding: '0.5rem 1rem',
                       border: 'none',

@@ -3891,3 +3891,105 @@ label .required {
   background-color: rgba(255, 255, 255, 0.25);
   font-weight: bold;
 }
+/* === Admin Consultation Card === */
+.consultation-card {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.2s ease;
+}
+.consultation-card:hover {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+/* === Editable Form Fields === */
+.consultation-card .consultation-form label {
+  font-weight: 600;
+  display: block;
+  margin-top: 0.75rem;
+  margin-bottom: 0.25rem;
+  color: #333;
+}
+
+.consultation-card .consultation-form input,
+.consultation-card .consultation-form select {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 0.95rem;
+  transition: border-color 0.3s ease;
+}
+
+.consultation-card .consultation-form input:focus,
+.consultation-card .consultation-form select:focus {
+  outline: none;
+  border-color: #1a8d50;
+}
+
+/* === Buttons inside consultation only === */
+.consultation-card .btn-toggle,
+.consultation-card .btn-save,
+.consultation-card .btn-delete {
+  display: block;
+  width: 100%;
+  padding: 0.65rem;
+  margin-top: 0.75rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+/* Toggle Button */
+.consultation-card .btn-toggle {
+  background-color: #1a8d50;
+  color: #fff;
+  border: none;
+}
+.consultation-card .btn-toggle:hover {
+  background-color: #157b42;
+}
+
+/* Save Button */
+.consultation-card .btn-save {
+  background-color: #2563eb;
+  color: #fff;
+  border: none;
+}
+.consultation-card .btn-save:hover {
+  background-color: #1e40af;
+}
+
+/* Delete Button */
+.consultation-card .btn-delete {
+  background-color: #b91c1c;
+  color: #fff;
+  border: none;
+}
+.consultation-card .btn-delete:hover {
+  background-color: #991b1b;
+}
+/* Ensure cards align independently */
+.consultation-card {
+  display: flex;
+  flex-direction: column;
+  align-self: start;
+}
+/* Slide-down container */
+.consultation-slide {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: scaleY(0.95);
+  transform-origin: top;
+  transition: all 0.4s ease;
+}
+
+/* When active (open) */
+.consultation-slide.open {
+  max-height: 1000px; /* large enough to hold the full form */
+  opacity: 1;
+  transform: scaleY(1);
+}
