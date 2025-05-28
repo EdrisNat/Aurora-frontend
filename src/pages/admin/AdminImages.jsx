@@ -67,7 +67,7 @@ const AdminImages = () => {
   // Delete record
   const handleDelete = id => {
     if (!window.confirm('Delete this record?')) return;
-    fetch(`http://localhost:8000/api/admin/analyze/${id}/`, { method: 'DELETE' })
+    fetch(`http://localhost:8000/api/analyze/${id}/`, { method: 'DELETE' })
       .then(res => {
         if (res.ok) {
           setImages(prev => prev.filter(img => img.id !== id));
